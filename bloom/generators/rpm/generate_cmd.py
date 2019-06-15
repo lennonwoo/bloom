@@ -42,9 +42,13 @@ from bloom.logging import error
 from bloom.logging import fmt
 from bloom.logging import info
 
-from bloom.generators.rpm.generator import generate_substitutions_from_package
-from bloom.generators.rpm.generator import place_template_files
-from bloom.generators.rpm.generator import process_template_files
+from bloom.generators.common import generate_substitutions_from_package
+from bloom.generators.common import place_template_files
+from bloom.generators.common import process_template_files
+
+from bloom.generators.rpm.generator import RpmGenerator
+from bloom.generators.rpm.generator import format_description
+from bloom.generators.rpm.generator import format_depends
 
 from bloom.util import get_distro_list_prompt
 
@@ -79,12 +83,18 @@ def prepare_arguments(parser):
 
 
 def get_subs(pkg, os_name, os_version, ros_distro):
-    return generate_substitutions_from_package(
+    # No fallback_resolver provided because peer packages not considered.
+    subs = generate_substitutions_from_package(
         pkg,
         os_name,
         os_version,
-        ros_distro
-    )
+        ros_distro,
+        format_description,
+        format_depends,
+        RpmGenerator.default_install_prefix
+        )
+    subs = RpmGenerator.get_subs_hook(subs, pkg, ros_distro)
+    return subs
 
 
 def main(args=None, get_subs_fn=None):
