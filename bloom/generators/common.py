@@ -841,7 +841,7 @@ class PackageManagerGenerator(BloomGenerator):
                     all_keys_valid = False
         return all_keys_valid
 
-    def _pre_modify(self, key_unvalid_error_msg):
+    def check_all_keys_are_valid(self, key_unvalid_error_msg):
         info("\nPre-verifying {0} dependency keys...".format(self.package_manager))
         # Run rosdep update is needed
         if not self.has_run_rosdep:
