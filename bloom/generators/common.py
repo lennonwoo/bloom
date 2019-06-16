@@ -228,7 +228,7 @@ def resolve_rosdep_key(
                             .format(key), returncode=returncode)
 
 
-def default_fallback_resolver(key, peer_packages):
+def default_fallback_resolver(key, peer_packages, rosdistro):
     BloomGenerator.exit("Failed to resolve rosdep key '{0}', aborting."
                         .format(key), returncode=code.GENERATOR_NO_SUCH_ROSDEP_KEY)
 
@@ -254,7 +254,7 @@ def resolve_dependencies(
         # Do not compare the installer key here since this is a general purpose function
         # They installer is verified in the OS specific generator, when the keys are pre-checked.
         if resolved_key is None:
-            resolved_key = fallback_resolver(key, peer_packages)
+            resolved_key = fallback_resolver(key, peer_packages, ros_distro)
         resolved_keys[key] = resolved_key
     return resolved_keys
 
@@ -984,10 +984,11 @@ class PackageManagerGenerator(BloomGenerator):
             if has_changes():
                 execute_command('git commit -m "Store releaser history"')
 
-    def missing_dep_resolver(self, key, peer_packages):
+    @staticmethod
+    def missing_dep_resolver(key, peer_packages, rosdistro):
         if key in peer_packages:
             return [sanitize_package_name(key)]
-        return default_fallback_resolver(key, peer_packages)
+        return default_fallback_resolver(key, peer_packages, rosdistro)
 
     def place_template_files(self, build_type, dir_path=None):
         # Create/Clean the package system folder

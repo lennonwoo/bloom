@@ -71,10 +71,11 @@ class RosRpmGenerator(RpmGenerator):
         info("Releasing for rosdistro: " + self.rosdistro)
         return ret
 
-    def missing_dep_resolver(self, key, peer_packages):
+    @staticmethod
+    def missing_dep_resolver(self, key, peer_packages, rosdistro):
         if key in peer_packages:
-            return [sanitize_package_name(rosify_package_name(key, self.rosdistro))]
-        return default_fallback_resolver(key, peer_packages)
+            return [sanitize_package_name(rosify_package_name(key, rosdistro))]
+        return default_fallback_resolver(key, peer_packages, rosdistro)
 
     @staticmethod
     def get_subs_hook(subs, package, rosdistro, releaser_history=None):
