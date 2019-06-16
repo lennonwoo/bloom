@@ -128,20 +128,21 @@ def main(args=None, get_subs_fn=None):
          fmt("Generating RPMs for @{cf}%s:%s@| for package(s) %s" %
              (os_name, os_version, [p.name for p in pkgs_dict.values()])))
 
+    package_manager = RpmGenerator.package_manager
     for path, pkg in pkgs_dict.items():
         template_files = None
         try:
             subs = get_subs_fn(pkg, os_name, os_version, ros_distro)
             if _place_template_files:
                 # Place template files
-                place_template_files(path, pkg.get_build_type())
+                place_template_files(path, pkg.get_build_type(), package_manager)
             if _process_template_files:
                 # Just process existing template files
-                template_files = process_template_files(path, subs)
+                template_files = process_template_files(path, subs, package_manager)
             if not _place_template_files and not _process_template_files:
                 # If neither, do both
-                place_template_files(path, pkg.get_build_type())
-                template_files = process_template_files(path, subs)
+                place_template_files(path, pkg.get_build_type(), package_manager)
+                template_files = process_template_files(path, subs, package_manager)
             if template_files is not None:
                 for template_file in template_files:
                     os.remove(os.path.normpath(template_file))
