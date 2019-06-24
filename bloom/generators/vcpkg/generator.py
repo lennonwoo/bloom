@@ -81,30 +81,11 @@ def format_depends(depends, resolved_deps):
     return formatted
 
 
-def vcpkgize_string(value):
+def format_description(value):
     markup_remover = re.compile(r'<.*?>')
     value = markup_remover.sub('', value)
     value = re.sub('\s+', ' ', value)
-    value = value.strip()
-    return value
 
-
-# TODO check the vcpkg description format
-def format_description(value):
-    """
-    Format proper <synopsis, long desc> string following Debian control file
-    formatting rules. Treat first line in given string as synopsis, everything
-    else as a single, large paragraph.
-
-    Future extensions of this function could convert embedded newlines and / or
-    html into paragraphs in the Description field.
-
-    https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-Description
-    """
-    value = vcpkgize_string(value)
-    # NOTE: bit naive, only works for 'properly formatted' pkg descriptions (ie:
-    #       'Text. Text'). Extra space to avoid splitting on arbitrary sequences
-    #       of characters broken up by dots (version nrs fi).
     parts = value.split('. ', 1)
     if len(parts) == 1 or len(parts[1]) == 0:
         # most likely single line description
