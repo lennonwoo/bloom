@@ -123,7 +123,7 @@ def main(args=None, get_subs_fn=None):
 
     # Summarize
     info(fmt("@!@{gf}==> @|") +
-         fmt("Generating debs for @{cf}%s:%s@| for package(s) %s" %
+         fmt("Generating ports for @{cf}%s:%s@| for package(s) %s" %
              (os_name, os_version, [p.name for p in pkgs_dict.values()])))
 
     package_manager = VcpkgGenerator.package_manager
