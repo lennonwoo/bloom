@@ -17,7 +17,6 @@ vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
     OPTIONS
         -DCMAKE_INSTALL_PREFIX=${ROS_BASE_PATH}
-        -DAMENT_PREFIX_PATH=${ROS_BASE_PATH}
 )
 
 vcpkg_install_cmake()

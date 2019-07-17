@@ -164,6 +164,7 @@ class VcpkgGenerator(PackageManagerGenerator):
             subs["repo_name"] = subs["repo_name"][:-4]
 
         subs['tag_name'] = VcpkgGenerator.generate_tag_name(subs)
+        subs['ros_distro'] = ros_distro
 
         return subs
 
