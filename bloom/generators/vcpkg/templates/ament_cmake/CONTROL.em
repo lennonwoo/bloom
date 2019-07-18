@@ -1,4 +1,4 @@
 Source: @(Package)
 Version: @(Version)
 Description: @(Description)
-Build-Depends: @(', '.join(BuildDepends))
+Build-Depends: @(', '.join(BuildDepends))@

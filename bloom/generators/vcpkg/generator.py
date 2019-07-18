@@ -141,12 +141,7 @@ class VcpkgGenerator(PackageManagerGenerator):
 
     @staticmethod
     def get_subs_hook(subs, package, ros_distro, releaser_history=None):
-        build_type = package.get_build_type()
-        if build_type != "ament_cmake":
-            error("Build type '{}' is not supported by this version of bloom.".
-                  format(build_type), exit=True)
-
-        # Get pacakge's release url from rosdistro repository
+       # Get pacakge's release url from rosdistro repository
         index = rosdistro.get_index(rosdistro.get_index_url())
         distribution_file = rosdistro.get_distribution_file(index, ros_distro)
         try:
