@@ -81,8 +81,8 @@ class RosVcpkgGenerator(VcpkgGenerator):
 
     @staticmethod
     def get_subs_hook(subs, package, rosdistro, releaser_history=None):
-        subs = VcpkgGenerator.get_subs_hook(subs, package, releaser_history)
         subs['Package'] = rosify_package_name(subs['Package'], rosdistro)
+        subs = VcpkgGenerator.get_subs_hook(subs, package, rosdistro, releaser_history=releaser_history)
 
         # ROS 2 specific bloom extensions.
         ros2_distros = [

@@ -77,7 +77,8 @@ def format_depends(depends, resolved_deps):
     formatted = []
     for d in depends:
         for resolved_dep in resolved_deps[d.name]:
-            formatted.append(resolved_dep)
+            if resolved_dep != "":
+                formatted.append(resolved_dep)
     return formatted
 
 
@@ -115,15 +116,17 @@ class VcpkgGenerator(PackageManagerGenerator):
             "Some of the dependencies for packages in this repository could not be resolved by rosdep.\n",
             "You can try to address the issues which appear above and try again if you wish."
         ])
-        PackageManagerGenerator.check_all_keys_are_valid(self, error_msg)
+        # disable it since we have check key is valid in
+        # generate_substitutions_from_package's resolve_dependencies
+        # PackageManagerGenerator.check_all_keys_are_valid(self, error_msg)
 
     def generate_package(self, package, os_version):
         info("Generating {0} for {1}...".format(self.package_manager, os_version))
         # Generate substitution values
         subs = self.get_subs(package, os_version, format_description, format_depends)
         # Use subs to create and store releaser history
-        releaser_history = [(v, (n, e)) for v, _, _, n, e in subs['changelogs']]
-        self.set_releaser_history(dict(releaser_history))
+        # releaser_history = [(v, (n, e)) for v, _, _, n, e in subs['changelogs']]
+        # self.set_releaser_history(dict(releaser_history))
         # Template files
         template_files = process_template_files(".", subs, self.package_manager)
         # Remove any residual template files
@@ -146,7 +149,17 @@ class VcpkgGenerator(PackageManagerGenerator):
         # Get pacakge's release url from rosdistro repository
         index = rosdistro.get_index(rosdistro.get_index_url())
         distribution_file = rosdistro.get_distribution_file(index, ros_distro)
-        repo = distribution_file.repositories[package.name]
+        try:
+            repo = distribution_file.repositories[package.name]
+        except KeyError as e:
+            # The current package is exist in a meta-package,
+            # Notice that the type of distribution_file.repositories is dict
+            for meta_repo in distribution_file.repositories.values():
+                if package.name in meta_repo.release_repository.package_names:
+                    repo = meta_repo
+                    break
+            else:
+                raise e
         release_url = repo.release_repository.url
 
         vcpkg_support_git_sources = ["github", "gitlab", "bitbucket"]
@@ -165,6 +178,9 @@ class VcpkgGenerator(PackageManagerGenerator):
 
         subs['tag_name'] = VcpkgGenerator.generate_tag_name(subs)
         subs['ros_distro'] = ros_distro
+
+        # put BulildDepends and Depends together since vcpkg only support BuildDepends
+        subs['BuildDepends'] = list(set(subs['BuildDepends'] + subs['Depends']))
 
         return subs
 

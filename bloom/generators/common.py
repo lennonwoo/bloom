@@ -206,6 +206,8 @@ def resolve_rosdep_key(
     try:
         return resolve_more_for_os(key, view, installer, os_name, os_version)
     except (KeyError, ResolutionError) as exc:
+        print("Key: {0} doesn't fit vcpkg".format(key))
+        return None, None, None
         debug(traceback.format_exc())
         if key in ignored:
             return None, None, None
@@ -254,7 +256,10 @@ def resolve_dependencies(
         # Do not compare the installer key here since this is a general purpose function
         # They installer is verified in the OS specific generator, when the keys are pre-checked.
         if resolved_key is None:
-            resolved_key = fallback_resolver(key, peer_packages, ros_distro)
+            if key in peer_packages:
+                resolved_key = fallback_resolver(key, peer_packages, ros_distro)
+            else:
+                resolved_key = ""
         resolved_keys[key] = resolved_key
     return resolved_keys
 
@@ -691,7 +696,8 @@ class BloomGenerator(object):
 
 class PackageManagerGenerator(BloomGenerator):
     package_manager = 'none'
-    has_run_rosdep = False
+    # has_run_rosdep = False
+    has_run_rosdep = True
     default_install_prefix = '/usr'
     rosdistro = os.environ.get('ROS_DISTRO', 'indigo')
 
