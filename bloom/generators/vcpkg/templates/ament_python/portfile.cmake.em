@@ -41,5 +41,5 @@ if (${PYTHONINTERP_FOUND})
         WORKING_DIRECTORY ${SOURCE_PATH}
     )
 else()
-    message(FATAL_ERROR "Python executable not fould, stop building"
+    message(FATAL_ERROR "Python executable not fould, stop building")
 endif()

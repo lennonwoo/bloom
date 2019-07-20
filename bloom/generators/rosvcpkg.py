@@ -92,8 +92,9 @@ class RosVcpkgGenerator(VcpkgGenerator):
             # Add ros-workspace package as a dependency to any package other
             # than ros_workspace and its dependencies.
             if package.name == 'ros_workspace':
-                subs['BuildDepends'].append('ament_package')
-                subs['Depends'].append('ament_package')
+                workspace_pkg_name = rosify_package_name('ament_package', rosdistro)
+                subs['BuildDepends'].append(workspace_pkg_name)
+                subs['Depends'].append(workspace_pkg_name)
 
             if package.name not in ['ament_cmake_core', 'ament_package', 'ros_workspace']:
                 workspace_pkg_name = rosify_package_name('ros-workspace', rosdistro)
